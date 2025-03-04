@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Launcher</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Add Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="launcher-container">
+        <div class="launcher">
+            <div class="input-section">
+                <div class="input-container">
+                    <i class="fas fa-kiwi-bird input-icon"></i>
+                    <input type="text" id="mind-input" placeholder="What's on your mind ?" class="mind-input">
+                    <button class="speech-btn" aria-label="Speech input">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="buttons">
+                <button>Contextual Select</button>
+                <button>Recall Something</button>
+                <button>Assign Actions</button>
+                <button>Physical Input</button>
+            </div>
+        </div>
+        <!-- Add chat container -->
+        <div class="chat-container">
+            <button class="close-btn" aria-label="Close chat">
+                <i class="fas fa-times"></i>
+            </button>
+            <div>
+                <div class="chat-messages">
+                    <!-- Messages will be added here -->
+                </div>
+                <div class="typing-indicator">
+                    <span class="thinking-text">I'm thinking...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 
