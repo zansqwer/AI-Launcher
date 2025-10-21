@@ -94,8 +94,19 @@ function setupEventListeners() {
 function handleKeyDown(e) {
     // Toggle launcher with OPT+Space (Mac) or Ctrl+Space (other platforms)
     const modifierKey = state.isMac ? e.altKey : e.ctrlKey;
+    const isSpace = e.code === 'Space' || e.key === ' ' || e.keyCode === 32;
 
-    if (e.code === 'Space' && modifierKey) {
+    // Debug logging
+    if (isSpace && modifierKey) {
+        console.log('Launcher shortcut detected!', {
+            isMac: state.isMac,
+            altKey: e.altKey,
+            ctrlKey: e.ctrlKey,
+            modifierKey: modifierKey
+        });
+    }
+
+    if (isSpace && modifierKey) {
         e.preventDefault();
         toggleLauncher();
         return;

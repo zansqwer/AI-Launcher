@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keyboard Test</title>
+    <style>
+        body {
+            font-family: 'Monaco', 'Courier New', monospace;
+            padding: 40px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #2a2a2a;
+            padding: 30px;
+            border-radius: 12px;
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        .instructions {
+            background: #333;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .event-log {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            min-height: 300px;
+            max-height: 500px;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .event-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #2a2a2a;
+            border-radius: 6px;
+            border-left: 3px solid #667eea;
+        }
+        .detected {
+            background: #1a4d1a !important;
+            border-left-color: #4ade80 !important;
+        }
+        .key-info {
+            color: #a78bfa;
+        }
+        .time {
+            color: #888;
+            font-size: 12px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #7c8ef5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⌨️ Keyboard Event Tester</h1>
+
+        <div class="instructions">
+            <p><strong>Instructions:</strong></p>
+            <ul>
+                <li>Press <strong>OPT+Space</strong> (Option+Space) on Mac</li>
+                <li>Press <strong>Ctrl+Space</strong> on Windows/Linux</li>
+                <li>Check if the shortcut is detected below</li>
+            </ul>
+            <p>Platform detected: <strong id="platform">...</strong></p>
+            <p>Expected shortcut: <strong id="expected-shortcut">...</strong></p>
+        </div>
+
+        <button onclick="clearLog()">Clear Log</button>
+
+        <h2>Event Log:</h2>
+        <div class="event-log" id="event-log">
+            <p style="color: #888;">Waiting for keyboard events...</p>
+        </div>
+    </div>
+
+    <script>
+        const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.userAgent);
+        const eventLog = document.getElementById('event-log');
+
+        document.getElementById('platform').textContent = isMac ? 'macOS' : 'Windows/Linux';
+        document.getElementById('expected-shortcut').textContent = isMac ? 'OPT + Space' : 'Ctrl + Space';
+
+        let eventCount = 0;
+
+        function clearLog() {
+            eventLog.innerHTML = '<p style="color: #888;">Waiting for keyboard events...</p>';
+            eventCount = 0;
+        }
+
+        document.addEventListener('keydown', (e) => {
+            eventCount++;
+
+            const modifierKey = isMac ? e.altKey : e.ctrlKey;
+            const isSpace = e.code === 'Space' || e.key === ' ' || e.keyCode === 32;
+            const isTargetShortcut = isSpace && modifierKey;
+
+            const eventDiv = document.createElement('div');
+            eventDiv.className = 'event-item' + (isTargetShortcut ? ' detected' : '');
+
+            const time = new Date().toLocaleTimeString();
+
+            eventDiv.innerHTML = `
+                <div class="time">#${eventCount} - ${time}</div>
+                <div><strong>${isTargetShortcut ? '✅ TARGET SHORTCUT DETECTED!' : 'Key Press'}</strong></div>
+                <div class="key-info">
+                    Key: <code>${e.key}</code> |
+                    Code: <code>${e.code}</code> |
+                    KeyCode: <code>${e.keyCode}</code>
+                </div>
+                <div class="key-info">
+                    Alt: ${e.altKey} |
+                    Ctrl: ${e.ctrlKey} |
+                    Meta: ${e.metaKey} |
+                    Shift: ${e.shiftKey}
+                </div>
+                <div class="key-info">
+                    ModifierKey (expected): ${modifierKey} |
+                    IsSpace: ${isSpace} |
+                    Match: ${isTargetShortcut}
+                </div>
+            `;
+
+            if (eventLog.firstChild.tagName !== 'DIV') {
+                eventLog.innerHTML = '';
+            }
+
+            eventLog.insertBefore(eventDiv, eventLog.firstChild);
+
+            // Prevent default for target shortcut
+            if (isTargetShortcut) {
+                e.preventDefault();
+                console.log('Target shortcut detected and prevented!');
+            }
+        });
+    </script>
+</body>
+</html>
