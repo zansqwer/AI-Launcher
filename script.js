@@ -5,7 +5,8 @@ const state = {
     isVisible: false,
     recentCommands: [],
     maxRecentCommands: 5,
-    chatHistory: []
+    chatHistory: [],
+    isMac: /Mac|iPhone|iPad|iPod/.test(navigator.userAgent)
 };
 
 // ===========================
@@ -51,7 +52,11 @@ function init() {
     // Initial render of recent items
     renderRecentItems();
 
+    // Update activation hint based on platform
+    updateActivationHint();
+
     console.log('AI Launcher initialized');
+    console.log('Platform:', state.isMac ? 'Mac' : 'Other');
 }
 
 // ===========================
@@ -87,8 +92,10 @@ function setupEventListeners() {
 // Keyboard Handling
 // ===========================
 function handleKeyDown(e) {
-    // Toggle launcher with Ctrl + Space
-    if (e.code === 'Space' && e.ctrlKey) {
+    // Toggle launcher with CMD+Space (Mac) or Ctrl+Space (other platforms)
+    const modifierKey = state.isMac ? e.metaKey : e.ctrlKey;
+
+    if (e.code === 'Space' && modifierKey) {
         e.preventDefault();
         toggleLauncher();
         return;
@@ -368,6 +375,16 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+function updateActivationHint() {
+    const hintElement = elements.activationHint;
+    if (hintElement) {
+        const keyText = state.isMac ? 'CMD' : 'Ctrl';
+        hintElement.innerHTML = `
+            <span class="hint-key">${keyText}</span> + <span class="hint-key">Space</span> to launch
+        `;
+    }
 }
 
 // ===========================
