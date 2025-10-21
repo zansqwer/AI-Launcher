@@ -92,21 +92,21 @@ function setupEventListeners() {
 // Keyboard Handling
 // ===========================
 function handleKeyDown(e) {
-    // Toggle launcher with OPT+Space (Mac) or Ctrl+Space (other platforms)
-    const modifierKey = state.isMac ? e.altKey : e.ctrlKey;
-    const isSpace = e.code === 'Space' || e.key === ' ' || e.keyCode === 32;
+    // Toggle launcher with CMD+K (Mac) or Ctrl+K (other platforms)
+    const modifierKey = state.isMac ? e.metaKey : e.ctrlKey;
+    const isKKey = e.code === 'KeyK' || e.key === 'k' || e.key === 'K' || e.keyCode === 75;
 
     // Debug logging
-    if (isSpace && modifierKey) {
+    if (isKKey && modifierKey) {
         console.log('Launcher shortcut detected!', {
             isMac: state.isMac,
-            altKey: e.altKey,
+            metaKey: e.metaKey,
             ctrlKey: e.ctrlKey,
             modifierKey: modifierKey
         });
     }
 
-    if (isSpace && modifierKey) {
+    if (isKKey && modifierKey) {
         e.preventDefault();
         toggleLauncher();
         return;
@@ -391,9 +391,9 @@ function escapeHtml(text) {
 function updateActivationHint() {
     const hintElement = elements.activationHint;
     if (hintElement) {
-        const keyText = state.isMac ? 'OPT' : 'Ctrl';
+        const keyText = state.isMac ? 'CMD' : 'Ctrl';
         hintElement.innerHTML = `
-            <span class="hint-key">${keyText}</span> + <span class="hint-key">Space</span> to launch
+            <span class="hint-key">${keyText}</span> + <span class="hint-key">K</span> to launch
         `;
     }
 }
