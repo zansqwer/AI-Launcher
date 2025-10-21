@@ -92,8 +92,8 @@ function setupEventListeners() {
 // Keyboard Handling
 // ===========================
 function handleKeyDown(e) {
-    // Toggle launcher with CMD+Space (Mac) or Ctrl+Space (other platforms)
-    const modifierKey = state.isMac ? e.metaKey : e.ctrlKey;
+    // Toggle launcher with OPT+Space (Mac) or Ctrl+Space (other platforms)
+    const modifierKey = state.isMac ? e.altKey : e.ctrlKey;
 
     if (e.code === 'Space' && modifierKey) {
         e.preventDefault();
@@ -380,7 +380,7 @@ function escapeHtml(text) {
 function updateActivationHint() {
     const hintElement = elements.activationHint;
     if (hintElement) {
-        const keyText = state.isMac ? 'CMD' : 'Ctrl';
+        const keyText = state.isMac ? 'OPT' : 'Ctrl';
         hintElement.innerHTML = `
             <span class="hint-key">${keyText}</span> + <span class="hint-key">Space</span> to launch
         `;
