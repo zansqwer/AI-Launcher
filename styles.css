@@ -111,7 +111,7 @@ body {
     width: 700px;
     max-width: 90vw;
     position: fixed;
-    bottom: -200px;
+    bottom: -100vh;
     left: 50%;
     transform: translateX(-50%);
     transition: bottom 0.3s linear;
@@ -125,7 +125,7 @@ body {
 }
 
 .launcher-container.closing {
-    bottom: -200px;
+    bottom: -100vh;
     pointer-events: none;
 }
 
