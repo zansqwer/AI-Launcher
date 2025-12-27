@@ -116,7 +116,7 @@ body {
     transform: translateX(-50%);
     opacity: 1;
     visibility: hidden;
-    transition: bottom 0.3s linear, visibility 0s linear 0.3s;
+    transition: bottom 0.3s linear;
     z-index: 1000;
 }
 
@@ -124,12 +124,13 @@ body {
     bottom: 40px;
     opacity: 1;
     visibility: visible;
-    transition: bottom 0.3s linear, visibility 0s;
+    transition: bottom 0.3s linear;
 }
 
 .launcher-container.closing {
     bottom: -200px;
     opacity: 1;
+    visibility: visible;
     transition: bottom 0.3s linear;
 }
 

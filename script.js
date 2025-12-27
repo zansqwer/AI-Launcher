@@ -172,6 +172,9 @@ function toggleLauncher() {
 
 function openLauncher() {
     state.isVisible = true;
+
+    // Reset visibility
+    elements.launcherContainer.style.visibility = 'visible';
     elements.launcherContainer.classList.add('visible');
     elements.activationHint.classList.add('hidden');
 
@@ -202,10 +205,14 @@ function closeLauncher() {
         closeChat();
     }
 
-    // Remove closing class after animation completes
+    // Wait for slide animation to complete, then hide
     setTimeout(() => {
         elements.launcherContainer.classList.remove('closing');
-    }, 500);
+        // Set visibility to hidden only after slide out completes
+        if (!state.isVisible) {
+            elements.launcherContainer.style.visibility = 'hidden';
+        }
+    }, 300); // Match the transition duration
 
     console.log('Launcher closed');
 }
