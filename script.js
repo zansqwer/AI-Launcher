@@ -105,8 +105,8 @@ function setupEventListeners() {
 // Keyboard Handling
 // ===========================
 function handleKeyDown(e) {
-    // Toggle launcher with Ctrl + Space
-    if (e.code === 'Space' && e.ctrlKey) {
+    // Toggle launcher with Shift + Cmd + Space (Mac) or Shift + Ctrl + Space (Windows/Linux)
+    if (e.code === 'Space' && e.shiftKey && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         toggleLauncher();
         return;
