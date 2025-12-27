@@ -114,24 +114,19 @@ body {
     bottom: -200px;
     left: 50%;
     transform: translateX(-50%);
-    opacity: 1;
-    visibility: hidden;
     transition: bottom 0.3s linear;
     z-index: 1000;
+    pointer-events: none;
 }
 
 .launcher-container.visible {
     bottom: 40px;
-    opacity: 1;
-    visibility: visible;
-    transition: bottom 0.3s linear;
+    pointer-events: all;
 }
 
 .launcher-container.closing {
     bottom: -200px;
-    opacity: 1;
-    visibility: visible;
-    transition: bottom 0.3s linear;
+    pointer-events: none;
 }
 
 /* ===========================
