@@ -17,125 +17,164 @@
     <div class="launcher-container">
         <!-- Main launcher interface -->
         <div class="launcher">
-            <!-- Search input section -->
+            <!-- Previous Chats Section -->
+            <div class="section">
+                <div class="section-title">Previous Chats</div>
+                <div class="chat-list" id="chat-list">
+                    <div class="chat-item">
+                        <div class="chat-icon gradient-1">
+                            <i class="fas fa-comment-dots"></i>
+                        </div>
+                        <div class="chat-info">
+                            <span class="chat-name">Golden Case Meaning Explained</span>
+                            <span class="chat-time">Just now</span>
+                        </div>
+                        <button class="switch-btn">Switch to chat <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                    <div class="chat-item">
+                        <div class="chat-icon gradient-2">
+                            <i class="fas fa-comment-dots"></i>
+                        </div>
+                        <div class="chat-info">
+                            <span class="chat-name">AI Conversation Branching Interface</span>
+                            <span class="chat-time">15 hours ago</span>
+                        </div>
+                        <button class="switch-btn">Switch to chat <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                    <div class="chat-item">
+                        <div class="chat-icon gradient-3">
+                            <i class="fas fa-comment-dots"></i>
+                        </div>
+                        <div class="chat-info">
+                            <span class="chat-name">ROE and Stock Price Dynamics</span>
+                            <span class="chat-time">12 days ago</span>
+                        </div>
+                        <button class="switch-btn">Switch to chat <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suggested Actions Section -->
+            <div class="section">
+                <div class="section-title">Suggested Actions</div>
+                <div class="action-list" id="action-list">
+                    <div class="action-item">
+                        <div class="action-icon spotify">
+                            <i class="fab fa-spotify"></i>
+                        </div>
+                        <div class="action-info">
+                            <span class="action-name">Play the podcast last listened - Lex Fridman Podcast : Javier Milei: President of Argentina - F...</span>
+                            <span class="action-app">Spotify</span>
+                        </div>
+                        <button class="switch-btn">Switch to app <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                    <div class="action-item">
+                        <div class="action-icon notion">
+                            <i class="fas fa-clone"></i>
+                        </div>
+                        <div class="action-info">
+                            <span class="action-name">Copy and paste to Notion</span>
+                            <span class="action-app">Autoflow</span>
+                        </div>
+                        <button class="shortcut-btn">Cmd+1</button>
+                    </div>
+                    <div class="action-item">
+                        <div class="action-icon arc">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <div class="action-info">
+                            <span class="action-name">Search for Yahoo Stock</span>
+                            <span class="action-app">Arc</span>
+                        </div>
+                        <button class="switch-btn">Switch to tab <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                    <div class="action-item">
+                        <div class="action-icon excel">
+                            <i class="fas fa-file-excel"></i>
+                        </div>
+                        <div class="action-info">
+                            <span class="action-name">Open file - Global Q3 Financial Report</span>
+                            <span class="action-app">Microsoft Excel</span>
+                        </div>
+                        <button class="shortcut-btn">Cmd+3</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Section -->
             <div class="input-section">
                 <div class="input-container">
-                    <i class="fas fa-search input-icon"></i>
-                    <input
-                        type="text"
-                        id="command-input"
-                        placeholder="Type a command or ask anything..."
-                        class="command-input"
-                        autocomplete="off"
-                        spellcheck="false"
-                    >
-                    <div class="input-actions">
-                        <button class="action-btn mic-btn" aria-label="Voice input" title="Voice input">
-                            <i class="fas fa-microphone"></i>
+                    <div class="input-left">
+                        <button class="model-selector">
+                            <div class="model-icon">
+                                <span class="gradient-dot"></span>
+                            </div>
                         </button>
-                        <button class="action-btn settings-btn" aria-label="Settings" title="Settings">
-                            <i class="fas fa-cog"></i>
+                        <button class="history-btn">
+                            <i class="far fa-clock"></i>
+                        </button>
+                        <input
+                            type="text"
+                            id="command-input"
+                            placeholder="What's on your mind ?"
+                            class="command-input"
+                            autocomplete="off"
+                            spellcheck="false"
+                        >
+                    </div>
+                    <div class="input-right">
+                        <button class="skills-btn">
+                            Skills <i class="fas fa-caret-down"></i>
+                        </button>
+                        <button class="submit-btn" id="submit-btn">
+                            <i class="fas fa-arrow-up"></i>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Command suggestions/quick actions -->
-            <div class="suggestions-section">
-                <div class="section-header">
-                    <i class="fas fa-bolt"></i>
-                    <span>Quick Actions</span>
-                </div>
-                <div class="suggestions-grid">
-                    <button class="suggestion-card" data-command="analyze">
-                        <div class="card-icon">
-                            <i class="fas fa-brain"></i>
-                        </div>
-                        <div class="card-content">
-                            <div class="card-title">AI Analyze</div>
-                            <div class="card-desc">Analyze context</div>
-                        </div>
-                    </button>
-                    <button class="suggestion-card" data-command="search">
-                        <div class="card-icon">
-                            <i class="fas fa-search"></i>
-                        </div>
-                        <div class="card-content">
-                            <div class="card-title">Smart Search</div>
-                            <div class="card-desc">Find anything</div>
-                        </div>
-                    </button>
-                    <button class="suggestion-card" data-command="generate">
-                        <div class="card-icon">
-                            <i class="fas fa-magic"></i>
-                        </div>
-                        <div class="card-content">
-                            <div class="card-title">Generate</div>
-                            <div class="card-desc">Create content</div>
-                        </div>
-                    </button>
-                    <button class="suggestion-card" data-command="assistant">
-                        <div class="card-icon">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                        <div class="card-content">
-                            <div class="card-title">AI Assistant</div>
-                            <div class="card-desc">Get help</div>
-                        </div>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Recent commands section -->
-            <div class="recent-section">
-                <div class="section-header">
-                    <i class="fas fa-history"></i>
-                    <span>Recent</span>
-                </div>
-                <div class="recent-items" id="recent-items">
-                    <!-- Recent items will be populated here -->
-                    <div class="empty-state">
-                        <i class="fas fa-clock"></i>
-                        <span>No recent commands</span>
+            <!-- Quick Action Buttons -->
+            <div class="quick-actions">
+                <button class="quick-action-btn">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-brain"></i>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- AI Chat interface -->
-        <div class="chat-container">
-            <div class="chat-header">
-                <div class="chat-title">
-                    <i class="fas fa-comments"></i>
-                    <span>AI Assistant</span>
-                </div>
-                <button class="close-btn" aria-label="Close chat">
-                    <i class="fas fa-times"></i>
+                    <span>Recall Something</span>
+                </button>
+                <button class="quick-action-btn">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <span>Assign Actions</span>
+                </button>
+                <button class="quick-action-btn">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-keyboard"></i>
+                    </div>
+                    <span>Physical Input</span>
                 </button>
             </div>
-            <div class="chat-content">
-                <div class="chat-messages" id="chat-messages">
-                    <!-- Messages will be added here -->
+
+            <!-- Keyboard Shortcuts -->
+            <div class="shortcuts-bar">
+                <div class="shortcut-group">
+                    <kbd>swipe-left</kbd>
+                    <kbd>swipe-right</kbd>
+                    <span>Navigate functions</span>
                 </div>
-                <div class="typing-indicator">
-                    <div class="typing-dots">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                    <span class="typing-text">AI is thinking...</span>
+                <div class="shortcut-group">
+                    <kbd>tap</kbd>
+                    <span>Enter to the function</span>
+                </div>
+                <div class="shortcut-group">
+                    <kbd>esc</kbd>
+                    <kbd>quick swipe-left</kbd>
+                    <span>Exit launcher</span>
                 </div>
             </div>
-        </div>
-
-        <!-- Keyboard shortcuts hint -->
-        <div class="shortcuts-hint">
-            <span><kbd>↑</kbd><kbd>↓</kbd> Navigate</span>
-            <span><kbd>Enter</kbd> Select</span>
-            <span><kbd>Esc</kbd> Close</span>
         </div>
     </div>
 
     <script src="script.js"></script>
 </body>
-</html> 
+</html>

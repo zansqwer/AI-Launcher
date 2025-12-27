@@ -3,9 +3,8 @@
 // ===========================
 const state = {
     isVisible: false,
-    recentCommands: [],
-    maxRecentCommands: 5,
-    chatHistory: []
+    selectedIndex: -1,
+    items: []
 };
 
 // ===========================
@@ -15,14 +14,12 @@ const elements = {
     activationHint: null,
     launcherContainer: null,
     commandInput: null,
-    chatContainer: null,
-    chatMessages: null,
-    typingIndicator: null,
-    recentItems: null,
-    suggestionCards: null,
-    closeBtn: null,
-    micBtn: null,
-    settingsBtn: null
+    submitBtn: null,
+    chatItems: null,
+    actionItems: null,
+    quickActionBtns: null,
+    switchBtns: null,
+    shortcutBtns: null
 };
 
 // ===========================
@@ -33,25 +30,30 @@ function init() {
     elements.activationHint = document.querySelector('.activation-hint');
     elements.launcherContainer = document.querySelector('.launcher-container');
     elements.commandInput = document.getElementById('command-input');
-    elements.chatContainer = document.querySelector('.chat-container');
-    elements.chatMessages = document.getElementById('chat-messages');
-    elements.typingIndicator = document.querySelector('.typing-indicator');
-    elements.recentItems = document.getElementById('recent-items');
-    elements.suggestionCards = document.querySelectorAll('.suggestion-card');
-    elements.closeBtn = document.querySelector('.close-btn');
-    elements.micBtn = document.querySelector('.mic-btn');
-    elements.settingsBtn = document.querySelector('.settings-btn');
+    elements.submitBtn = document.getElementById('submit-btn');
+    elements.chatItems = document.querySelectorAll('.chat-item');
+    elements.actionItems = document.querySelectorAll('.action-item');
+    elements.quickActionBtns = document.querySelectorAll('.quick-action-btn');
+    elements.switchBtns = document.querySelectorAll('.switch-btn');
+    elements.shortcutBtns = document.querySelectorAll('.shortcut-btn');
 
-    // Load recent commands from localStorage
-    loadRecentCommands();
+    // Build items list for navigation
+    buildItemsList();
 
     // Setup event listeners
     setupEventListeners();
 
-    // Initial render of recent items
-    renderRecentItems();
-
     console.log('AI Launcher initialized');
+}
+
+// ===========================
+// Build navigable items list
+// ===========================
+function buildItemsList() {
+    state.items = [
+        ...elements.chatItems,
+        ...elements.actionItems
+    ];
 }
 
 // ===========================
@@ -63,24 +65,40 @@ function setupEventListeners() {
 
     // Input events
     elements.commandInput.addEventListener('keydown', handleInputKeyDown);
-    elements.commandInput.addEventListener('input', handleInputChange);
 
-    // Suggestion cards
-    elements.suggestionCards.forEach(card => {
-        card.addEventListener('click', () => {
-            const command = card.getAttribute('data-command');
-            handleSuggestionClick(command, card.querySelector('.card-title').textContent);
+    // Submit button
+    elements.submitBtn.addEventListener('click', handleSubmit);
+
+    // Chat items
+    elements.chatItems.forEach(item => {
+        item.addEventListener('click', () => handleChatItemClick(item));
+    });
+
+    // Action items
+    elements.actionItems.forEach(item => {
+        item.addEventListener('click', () => handleActionItemClick(item));
+    });
+
+    // Quick action buttons
+    elements.quickActionBtns.forEach(btn => {
+        btn.addEventListener('click', () => handleQuickActionClick(btn));
+    });
+
+    // Switch buttons - prevent propagation
+    elements.switchBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handleSwitchClick(btn);
         });
     });
 
-    // Close button
-    elements.closeBtn.addEventListener('click', closeChat);
-
-    // Mic button
-    elements.micBtn.addEventListener('click', handleMicClick);
-
-    // Settings button
-    elements.settingsBtn.addEventListener('click', handleSettingsClick);
+    // Shortcut buttons - prevent propagation
+    elements.shortcutBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handleShortcutClick(btn);
+        });
+    });
 }
 
 // ===========================
@@ -100,20 +118,60 @@ function handleKeyDown(e) {
         closeLauncher();
         return;
     }
+
+    // Navigation with arrow keys when launcher is visible
+    if (state.isVisible && state.items.length > 0) {
+        if (e.code === 'ArrowDown') {
+            e.preventDefault();
+            navigateItems(1);
+        } else if (e.code === 'ArrowUp') {
+            e.preventDefault();
+            navigateItems(-1);
+        } else if (e.code === 'Enter' && state.selectedIndex >= 0) {
+            e.preventDefault();
+            selectCurrentItem();
+        }
+    }
 }
 
 function handleInputKeyDown(e) {
     // Submit on Enter
     if (e.key === 'Enter' && elements.commandInput.value.trim() !== '') {
         e.preventDefault();
-        submitCommand(elements.commandInput.value.trim());
+        handleSubmit();
     }
 }
 
-function handleInputChange(e) {
-    // Could add real-time search/filtering here
-    const value = e.target.value;
-    console.log('Input changed:', value);
+// ===========================
+// Navigation
+// ===========================
+function navigateItems(direction) {
+    // Clear previous selection
+    if (state.selectedIndex >= 0 && state.items[state.selectedIndex]) {
+        state.items[state.selectedIndex].classList.remove('selected');
+    }
+
+    // Update index
+    state.selectedIndex += direction;
+
+    // Wrap around
+    if (state.selectedIndex < 0) {
+        state.selectedIndex = state.items.length - 1;
+    } else if (state.selectedIndex >= state.items.length) {
+        state.selectedIndex = 0;
+    }
+
+    // Apply selection
+    if (state.items[state.selectedIndex]) {
+        state.items[state.selectedIndex].classList.add('selected');
+        state.items[state.selectedIndex].scrollIntoView({ block: 'nearest' });
+    }
+}
+
+function selectCurrentItem() {
+    if (state.selectedIndex >= 0 && state.items[state.selectedIndex]) {
+        state.items[state.selectedIndex].click();
+    }
 }
 
 // ===========================
@@ -129,6 +187,7 @@ function toggleLauncher() {
 
 function openLauncher() {
     state.isVisible = true;
+    state.selectedIndex = -1;
     elements.launcherContainer.classList.add('visible');
     elements.activationHint.classList.add('hidden');
 
@@ -142,232 +201,118 @@ function openLauncher() {
 
 function closeLauncher() {
     state.isVisible = false;
+    state.selectedIndex = -1;
     elements.launcherContainer.classList.remove('visible');
     elements.activationHint.classList.remove('hidden');
     elements.commandInput.value = '';
     elements.commandInput.blur();
 
-    // Close chat if open
-    if (elements.chatContainer.classList.contains('visible')) {
-        closeChat();
-    }
+    // Clear selection
+    state.items.forEach(item => item.classList.remove('selected'));
 
     console.log('Launcher closed');
 }
 
 // ===========================
-// Chat Management
+// Click Handlers
 // ===========================
-function openChat() {
-    elements.chatContainer.classList.add('visible');
+function handleChatItemClick(item) {
+    const chatName = item.querySelector('.chat-name').textContent;
+    console.log('Chat clicked:', chatName);
+    // Here you would switch to the chat
+    showNotification(`Switching to chat: ${chatName}`);
 }
 
-function closeChat() {
-    elements.chatContainer.classList.remove('visible');
-    // Clear chat after animation
-    setTimeout(() => {
-        elements.chatMessages.innerHTML = '';
-        state.chatHistory = [];
-    }, 300);
+function handleActionItemClick(item) {
+    const actionName = item.querySelector('.action-name').textContent;
+    console.log('Action clicked:', actionName);
+    // Here you would perform the action
+    showNotification(`Executing: ${actionName}`);
 }
 
-function addMessage(text, type = 'user') {
-    const message = document.createElement('div');
-    message.className = `message ${type}-message`;
-    message.textContent = text;
-    elements.chatMessages.appendChild(message);
-
-    // Scroll to bottom
-    elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
-
-    // Add to history
-    state.chatHistory.push({ text, type, timestamp: Date.now() });
+function handleQuickActionClick(btn) {
+    const actionText = btn.querySelector('span').textContent;
+    console.log('Quick action clicked:', actionText);
+    showNotification(`${actionText} activated`);
 }
 
-function showTypingIndicator() {
-    elements.typingIndicator.classList.add('visible');
-    // Scroll to show typing indicator
-    elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+function handleSwitchClick(btn) {
+    const btnText = btn.textContent.trim();
+    console.log('Switch clicked:', btnText);
+    showNotification(btnText);
 }
 
-function hideTypingIndicator() {
-    elements.typingIndicator.classList.remove('visible');
+function handleShortcutClick(btn) {
+    const shortcut = btn.textContent;
+    console.log('Shortcut clicked:', shortcut);
+    showNotification(`Shortcut ${shortcut} triggered`);
 }
 
-async function submitCommand(command) {
-    // Add to recent commands
-    addRecentCommand(command);
-
-    // Clear input
-    elements.commandInput.value = '';
-
-    // Open chat if not already open
-    if (!elements.chatContainer.classList.contains('visible')) {
-        openChat();
+function handleSubmit() {
+    const query = elements.commandInput.value.trim();
+    if (query) {
+        console.log('Submitted:', query);
+        showNotification(`Processing: ${query}`);
+        elements.commandInput.value = '';
     }
-
-    // Add user message
-    addMessage(command, 'user');
-
-    // Show typing indicator
-    showTypingIndicator();
-
-    // Simulate AI response (replace with actual AI integration)
-    await simulateAIResponse(command);
-
-    // Hide typing indicator
-    hideTypingIndicator();
-
-    // Add AI response
-    const response = generateAIResponse(command);
-    addMessage(response, 'ai');
-}
-
-async function simulateAIResponse(command) {
-    // Simulate network delay
-    const delay = 1500 + Math.random() * 1000; // 1.5-2.5 seconds
-    await new Promise(resolve => setTimeout(resolve, delay));
-}
-
-function generateAIResponse(command) {
-    // Generate contextual responses based on command
-    const responses = {
-        analyze: "I've analyzed the current context. Here are the key insights: Your workflow appears optimized, with several opportunities for automation. Would you like me to elaborate on specific areas?",
-        search: `I found several relevant results for "${command}". The most relevant items have been highlighted. Would you like me to search more specifically?`,
-        generate: "I've generated content based on your request. The output has been formatted and is ready for use. Would you like me to make any adjustments?",
-        assistant: "I'm your AI assistant, ready to help! I can analyze data, search for information, generate content, and much more. What would you like me to help you with?"
-    };
-
-    // Check if command matches any quick action
-    for (const [key, response] of Object.entries(responses)) {
-        if (command.toLowerCase().includes(key)) {
-            return response;
-        }
-    }
-
-    // Default response
-    return `I've processed your request: "${command}". As an AI assistant, I'm here to help you with various tasks including analysis, search, content generation, and more. How else can I assist you today?`;
-}
-
-function handleSuggestionClick(command, title) {
-    console.log('Suggestion clicked:', command, title);
-
-    // Set input value
-    elements.commandInput.value = `${title}: `;
-    elements.commandInput.focus();
-
-    // Or directly submit the command
-    // submitCommand(title);
 }
 
 // ===========================
-// Recent Commands Management
+// Notification Helper
 // ===========================
-function loadRecentCommands() {
-    try {
-        const saved = localStorage.getItem('aiLauncherRecent');
-        if (saved) {
-            state.recentCommands = JSON.parse(saved);
-        }
-    } catch (error) {
-        console.error('Failed to load recent commands:', error);
-        state.recentCommands = [];
-    }
-}
+function showNotification(message) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 12px 24px;
+        background: rgba(30, 32, 40, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 9999;
+        animation: slideUp 0.3s ease;
+    `;
 
-function saveRecentCommands() {
-    try {
-        localStorage.setItem('aiLauncherRecent', JSON.stringify(state.recentCommands));
-    } catch (error) {
-        console.error('Failed to save recent commands:', error);
-    }
-}
-
-function addRecentCommand(command) {
-    // Remove if already exists
-    state.recentCommands = state.recentCommands.filter(item => item.text !== command);
-
-    // Add to beginning
-    state.recentCommands.unshift({
-        text: command,
-        timestamp: Date.now()
-    });
-
-    // Limit to max recent commands
-    if (state.recentCommands.length > state.maxRecentCommands) {
-        state.recentCommands = state.recentCommands.slice(0, state.maxRecentCommands);
-    }
-
-    // Save and render
-    saveRecentCommands();
-    renderRecentItems();
-}
-
-function renderRecentItems() {
-    if (state.recentCommands.length === 0) {
-        elements.recentItems.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-clock"></i>
-                <span>No recent commands</span>
-            </div>
+    // Add animation keyframes if not exists
+    if (!document.getElementById('notification-styles')) {
+        const style = document.createElement('style');
+        style.id = 'notification-styles';
+        style.textContent = `
+            @keyframes slideUp {
+                from {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0);
+                }
+            }
+            .chat-item.selected,
+            .action-item.selected {
+                background: rgba(255, 255, 255, 0.1) !important;
+            }
         `;
-        return;
+        document.head.appendChild(style);
     }
 
-    elements.recentItems.innerHTML = state.recentCommands
-        .map(item => {
-            const timeAgo = getTimeAgo(item.timestamp);
-            return `
-                <div class="recent-item" data-command="${escapeHtml(item.text)}">
-                    <i class="fas fa-terminal"></i>
-                    <span>${escapeHtml(item.text)}</span>
-                    <span class="recent-time">${timeAgo}</span>
-                </div>
-            `;
-        })
-        .join('');
+    document.body.appendChild(notification);
 
-    // Add click handlers to recent items
-    document.querySelectorAll('.recent-item').forEach(item => {
-        item.addEventListener('click', () => {
-            const command = item.getAttribute('data-command');
-            submitCommand(command);
-        });
-    });
-}
-
-// ===========================
-// Button Handlers
-// ===========================
-function handleMicClick() {
-    console.log('Microphone button clicked');
-    // Implement voice input functionality here
-    alert('Voice input feature coming soon!');
-}
-
-function handleSettingsClick() {
-    console.log('Settings button clicked');
-    // Implement settings panel here
-    alert('Settings panel coming soon!');
-}
-
-// ===========================
-// Utility Functions
-// ===========================
-function getTimeAgo(timestamp) {
-    const seconds = Math.floor((Date.now() - timestamp) / 1000);
-
-    if (seconds < 60) return 'just now';
-    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-    if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
-    return `${Math.floor(seconds / 604800)}w ago`;
-}
-
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+    // Remove after 2 seconds
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 2000);
 }
 
 // ===========================
@@ -380,12 +325,12 @@ if (document.readyState === 'loading') {
 }
 
 // ===========================
-// Export for debugging (optional)
+// Export for debugging
 // ===========================
 window.aiLauncher = {
     state,
     elements,
     toggleLauncher,
-    submitCommand,
-    closeChat
+    openLauncher,
+    closeLauncher
 };
