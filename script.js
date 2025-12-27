@@ -86,6 +86,15 @@ function setupEventListeners() {
 
     // Settings button
     elements.settingsBtn.addEventListener('click', handleSettingsClick);
+
+    // Test toggle button
+    const testBtn = document.getElementById('test-toggle-btn');
+    if (testBtn) {
+        testBtn.addEventListener('click', () => {
+            console.log('Test button clicked!');
+            toggleLauncher();
+        });
+    }
 }
 
 // ===========================
@@ -95,6 +104,17 @@ function handleKeyDown(e) {
     // Toggle launcher with SHIFT+CMD+SPACE (Mac) or Ctrl+Space (other platforms)
     const isSpace = e.code === 'Space' || e.key === ' ' || e.keyCode === 32;
 
+    // Log all Space key presses for debugging
+    if (isSpace) {
+        console.log('Space key detected:', {
+            isMac: state.isMac,
+            shiftKey: e.shiftKey,
+            metaKey: e.metaKey,
+            ctrlKey: e.ctrlKey,
+            altKey: e.altKey
+        });
+    }
+
     // Mac: SHIFT + CMD + SPACE, Other: Ctrl + Space
     const isShortcut = state.isMac
         ? (e.shiftKey && e.metaKey && isSpace)
@@ -102,7 +122,7 @@ function handleKeyDown(e) {
 
     // Debug logging
     if (isShortcut) {
-        console.log('Launcher shortcut detected!', {
+        console.log('✅ Launcher shortcut detected!', {
             isMac: state.isMac,
             shiftKey: e.shiftKey,
             metaKey: e.metaKey,
