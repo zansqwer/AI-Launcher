@@ -77,8 +77,8 @@
         <div class="instructions">
             <p><strong>Instructions:</strong></p>
             <ul>
-                <li>Press <strong>CMD+K</strong> (⌘+K) on Mac</li>
-                <li>Press <strong>Ctrl+K</strong> on Windows/Linux</li>
+                <li>Press <strong>OPT+CMD+Space</strong> (⌥+⌘+Space) on Mac</li>
+                <li>Press <strong>Ctrl+Space</strong> on Windows/Linux</li>
                 <li>Check if the shortcut is detected below</li>
             </ul>
             <p>Platform detected: <strong id="platform">...</strong></p>
@@ -98,7 +98,7 @@
         const eventLog = document.getElementById('event-log');
 
         document.getElementById('platform').textContent = isMac ? 'macOS' : 'Windows/Linux';
-        document.getElementById('expected-shortcut').textContent = isMac ? 'CMD + K (⌘+K)' : 'Ctrl + K';
+        document.getElementById('expected-shortcut').textContent = isMac ? 'OPT + CMD + Space (⌥+⌘+Space)' : 'Ctrl + Space';
 
         let eventCount = 0;
 
@@ -110,9 +110,10 @@
         document.addEventListener('keydown', (e) => {
             eventCount++;
 
-            const modifierKey = isMac ? e.metaKey : e.ctrlKey;
-            const isKKey = e.code === 'KeyK' || e.key === 'k' || e.key === 'K' || e.keyCode === 75;
-            const isTargetShortcut = isKKey && modifierKey;
+            const isSpace = e.code === 'Space' || e.key === ' ' || e.keyCode === 32;
+            const isTargetShortcut = isMac
+                ? (e.altKey && e.metaKey && isSpace)
+                : (e.ctrlKey && isSpace);
 
             const eventDiv = document.createElement('div');
             eventDiv.className = 'event-item' + (isTargetShortcut ? ' detected' : '');
@@ -134,8 +135,8 @@
                     Shift: ${e.shiftKey}
                 </div>
                 <div class="key-info">
-                    ModifierKey (expected): ${modifierKey} |
-                    IsKKey: ${isKKey} |
+                    IsSpace: ${isSpace} |
+                    ${isMac ? 'Alt+Meta+Space' : 'Ctrl+Space'}: ${isTargetShortcut ? '✅' : '❌'} |
                     Match: ${isTargetShortcut}
                 </div>
             `;
