@@ -121,7 +121,7 @@ body {
 }
 
 .launcher-container.visible {
-    transform: translate(-50%, calc(-100% - 40px));
+    transform: translate(-50%, -40px);
     pointer-events: all;
 }
 
