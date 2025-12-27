@@ -185,8 +185,15 @@ function openLauncher() {
 
 function closeLauncher() {
     state.isVisible = false;
+
+    // Add closing animation class
+    elements.launcherContainer.classList.add('closing');
     elements.launcherContainer.classList.remove('visible');
+
+    // Show activation hint
     elements.activationHint.classList.remove('hidden');
+
+    // Clear input
     elements.commandInput.value = '';
     elements.commandInput.blur();
 
@@ -194,6 +201,11 @@ function closeLauncher() {
     if (elements.chatContainer.classList.contains('visible')) {
         closeChat();
     }
+
+    // Remove closing class after animation completes
+    setTimeout(() => {
+        elements.launcherContainer.classList.remove('closing');
+    }, 500);
 
     console.log('Launcher closed');
 }
